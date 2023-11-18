@@ -1,23 +1,23 @@
 {
-  "name": "board-project",
+  "name": "kweb-simple-board",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/index.js"
+    "start": "./nodemon src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.2",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "morgan": "^1.10.0",
-    "mysql2": "^2.3.0",
+    "mysql2": "^3.6.3",
     "pug": "^3.0.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.13"
+    "nodemon": "^3.0.1"
   }
 }
