@@ -4,7 +4,8 @@ const readArticle = async (req, res, next) => {
   try {
     const { user } = req.session;
     const { articleId } = req.params;
-    const article = ArticleDAO.getById(articleId);
+    const article = await ArticleDAO.getById(articleId);
+    console.log(article);
     return res.render("articles/details.pug", { user, article });
   } catch (err) {
     return next(err);
