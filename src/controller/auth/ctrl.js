@@ -1,5 +1,8 @@
 const { UserDAO } = require("../../DAO");
-const { verifyPassword } = require("../../lib/authentication");
+const {
+  generatePassword,
+  verifyPassword,
+} = require("../../lib/authentication");
 
 const signInForm = async (req, res, next) => {
   try {
@@ -24,6 +27,7 @@ const signIn = async (req, res, next) => {
       username,
       ...user,
     };
+    return res.redirect("/");
   } catch (err) {
     return next(err);
   }
@@ -31,6 +35,8 @@ const signIn = async (req, res, next) => {
 
 const signUpForm = async (req, res, next) => {
   try {
+    const { user } = req.session;
+    return res.render("auth/sign-up.pug", { user });
   } catch (err) {
     return next(err);
   }
@@ -38,6 +44,18 @@ const signUpForm = async (req, res, next) => {
 
 const signUp = async (req, res, next) => {
   try {
+    const { username, password, displayName } = req.body;
+    if (
+      !username ||
+      username.length > 16 ||
+      !password ||
+      !displayName ||
+      displayName.length > 32
+    )
+      throw new Error("BAD_REQUEST");
+    const hashedPassword = await generatePassword(password);
+    await UserDAO.create(username, hashedPassword, displayName);
+    return res.redirect("/");
   } catch (err) {
     return next(err);
   }
@@ -45,6 +63,10 @@ const signUp = async (req, res, next) => {
 
 const signOut = async (req, res, next) => {
   try {
+    req.session.destroy((err) => {
+      if (err) throw err;
+      else return res.redirect("/");
+    });
   } catch (err) {
     return next(err);
   }
