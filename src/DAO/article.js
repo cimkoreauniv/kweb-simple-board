@@ -62,7 +62,7 @@ const create = async (title, content, author) => {
 };
 
 const update = async (id, title, content) => {
-  const sql = `UPDATE aritcles SET title=?, content=? WHERE id=?`;
+  const sql = `UPDATE articles SET title=?, content=? WHERE id=?`;
   await runQuery(sql, [title, content, id]);
 };
 

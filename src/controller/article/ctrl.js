@@ -5,7 +5,7 @@ const readArticle = async (req, res, next) => {
     const { user } = req.session;
     const { articleId } = req.params;
     const article = await ArticleDAO.getById(articleId);
-    console.log(article);
+    if (!article) throw new Error("NOT_EXIST");
     return res.render("articles/details.pug", { user, article });
   } catch (err) {
     return next(err);
@@ -39,6 +39,12 @@ const writeArticle = async (req, res, next) => {
 
 const editArticleForm = async (req, res, next) => {
   try {
+    const { user } = req.session;
+    const { articleId } = req.params;
+    const article = await ArticleDAO.getByIdAndAuthor(articleId, user);
+    if (!article) throw new Error("NOT_EXIST");
+
+    return res.render("articles/editor.pug", { user, article });
   } catch (err) {
     return next(err);
   }
@@ -46,6 +52,19 @@ const editArticleForm = async (req, res, next) => {
 
 const editArticle = async (req, res, next) => {
   try {
+    const { user } = req.session;
+    const { articleId } = req.params;
+    const title = req.body.title.trim();
+    const content = req.body.content.trim();
+
+    if (!title || title.length > 50 || !content || content.length > 65535)
+      throw new Error("BAD_REQUEST");
+
+    const article = ArticleDAO.getByIdAndAuthor(articleId, user);
+    if (!article) throw new Error("NOT_EXIST");
+
+    await ArticleDAO.update(articleId, title, content);
+    return res.redirect(`/article/${articleId}`);
   } catch (err) {
     return next(err);
   }
@@ -53,6 +72,14 @@ const editArticle = async (req, res, next) => {
 
 const deleteArticle = async (req, res, next) => {
   try {
+    const { user } = req.session;
+    const { articleId } = req.params;
+
+    const article = ArticleDAO.getByIdAndAuthor(articleId, user);
+    if (!article) throw new Error("NOT_EXIST");
+
+    await ArticleDAO.remove(articleId);
+    return res.redirect("/articles");
   } catch (err) {
     return next(err);
   }

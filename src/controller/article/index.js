@@ -1,11 +1,13 @@
 const { Router } = require("express");
 const ctrl = require("./ctrl");
+const { authRequired } = require("../auth/middleware");
 
 // '/article'
 const router = Router();
 
 router.get("/:articleId(\\d+)", ctrl.readArticle);
 
+router.use("/", authRequired);
 router.get("/compose", ctrl.writeArticleForm);
 router.post("/compose", ctrl.writeArticle);
 
