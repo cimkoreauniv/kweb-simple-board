@@ -25,7 +25,7 @@ const getList = async (start, count) => {
     ORDER BY articles.id ASC LIMIT ?, ?`;
 
   const result = await runQuery(sql, [start, count]);
-  return result;
+  return result.map(replaceDate);
 };
 
 const getTotalCount = async () => {
@@ -41,7 +41,7 @@ const getById = async (id) => {
     WHERE articles.id=?`;
 
   const result = await runQuery(sql, [id]);
-  return result[0];
+  return replaceDate(result[0]);
 };
 
 const getByIdAndAuthor = async (id, author) => {
@@ -51,7 +51,7 @@ const getByIdAndAuthor = async (id, author) => {
     WHERE articles.id=? AND users.id = ?`;
 
   const result = await runQuery(sql, [id, author.id]);
-  return result[0];
+  return replaceDate(result[0]);
 };
 
 const create = async (title, content, author) => {
