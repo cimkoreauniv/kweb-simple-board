@@ -19,13 +19,14 @@ const replaceDate = (article) => {
 };
 
 const getList = async (start, count) => {
-  const sql = `SELECT articles.id AS id, title, created_at AS createdAt,
+  const sql = `SELECT articles.id AS id, title, content, created_at AS createdAt,
     last_updated AS lastUpdated, display_name as displayName
-    FROM articles INNER JOIN users ON articles.id=users.id
-    ORDER BY articles.id ASC LIMIT ?, ?`;
+    FROM articles INNER JOIN users ON articles.author=users.id
+    AND articles.is_active = 1 AND articles.is_deleted=0
+    ORDER BY articles.id DESC LIMIT ?, ?`;
 
   const result = await runQuery(sql, [start, count]);
-  return result;
+  return result.map(replaceDate);
 };
 
 const getTotalCount = async () => {
@@ -35,20 +36,20 @@ const getTotalCount = async () => {
 };
 
 const getById = async (id) => {
-  const sql = `SELECT articles.id AS id, title, created_at AS createdAt,
-    last_updated AS lastUpdated, display_name as displayName
-    FROM articles INNER JOIN users ON articles.id=users.id
-    WHERE articles.id=?`;
+  const sql = `SELECT articles.id AS id, title, content, created_at AS createdAt,
+  last_updated AS lastUpdated, display_name as displayName
+  FROM articles INNER JOIN users ON articles.author=users.id
+  AND articles.is_active = 1 AND articles.is_deleted=0 AND articles.id=?`;
 
   const result = await runQuery(sql, [id]);
   return result[0];
 };
 
 const getByIdAndAuthor = async (id, author) => {
-  const sql = `SELECT articles.id AS id, title, created_at AS createdAt,
-    last_updated AS lastUpdated, display_name as displayName
-    FROM articles INNER JOIN users ON articles.id=users.id
-    WHERE articles.id=? AND users.id = ?`;
+  const sql = `SELECT articles.id AS id, title, content, created_at AS createdAt,
+  last_updated AS lastUpdated, display_name as displayName
+  FROM articles INNER JOIN users ON articles.author=users.id
+  AND articles.is_active = 1 AND articles.is_deleted=0 AND articles.id=? AND users.id = ?`;
 
   const result = await runQuery(sql, [id, author.id]);
   return result[0];
@@ -56,7 +57,8 @@ const getByIdAndAuthor = async (id, author) => {
 
 const create = async (title, content, author) => {
   const sql = `INSERT INTO articles (title, content, author) VALUES (?, ?, ?)`;
-  await runQuery(sql, [title, content, author.id]);
+  const result = await runQuery(sql, [title, content, author.id]);
+  return result.insertId;
 };
 
 const update = async (id, title, content) => {
@@ -65,7 +67,7 @@ const update = async (id, title, content) => {
 };
 
 const remove = async (id) => {
-  const sql = `DELETE FROM articles WHERE id=?`;
+  const sql = `UPDATE articles SET is_deleted=1 WHERE id=?`;
   await runQuery(sql, [id]);
 };
 
