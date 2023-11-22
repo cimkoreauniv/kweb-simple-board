@@ -21,7 +21,7 @@ const replaceDate = (article) => {
 const getList = async (start, count) => {
   const sql = `SELECT articles.id AS id, title, created_at AS createdAt,
     last_updated AS lastUpdated, display_name as displayName
-    FROM articles INNER JOIN users ON articles.id=users.id
+    FROM articles INNER JOIN users ON articles.author=users.id
     ORDER BY articles.id ASC LIMIT ?, ?`;
 
   const result = await runQuery(sql, [start, count]);
@@ -35,9 +35,9 @@ const getTotalCount = async () => {
 };
 
 const getById = async (id) => {
-  const sql = `SELECT articles.id AS id, title, created_at AS createdAt,
+  const sql = `SELECT articles.id AS id, content, title, created_at AS createdAt,
     last_updated AS lastUpdated, display_name as displayName
-    FROM articles INNER JOIN users ON articles.id=users.id
+    FROM articles INNER JOIN users ON articles.author=users.id
     WHERE articles.id=?`;
 
   const result = await runQuery(sql, [id]);
@@ -45,9 +45,9 @@ const getById = async (id) => {
 };
 
 const getByIdAndAuthor = async (id, author) => {
-  const sql = `SELECT articles.id AS id, title, created_at AS createdAt,
+  const sql = `SELECT articles.id AS id, content, title, created_at AS createdAt,
     last_updated AS lastUpdated, display_name as displayName
-    FROM articles INNER JOIN users ON articles.id=users.id
+    FROM articles INNER JOIN users ON articles.author=users.id
     WHERE articles.id=? AND users.id = ?`;
 
   const result = await runQuery(sql, [id, author.id]);
@@ -56,7 +56,7 @@ const getByIdAndAuthor = async (id, author) => {
 
 const create = async (title, content, author) => {
   const sql = `INSERT INTO articles (title, content, author) VALUES (?, ?, ?)`;
-  await runQuery(sql, [title, content, author.id]);
+  return (await runQuery(sql, [title, content, author.id])).insertId;
 };
 
 const update = async (id, title, content) => {
