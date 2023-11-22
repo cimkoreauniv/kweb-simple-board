@@ -22,7 +22,7 @@ const signIn = async (req, res, next) => {
     if (!user) throw new Error("UNAUTHORIZED");
     const success = await verifyPassword(password, user.password);
     if (!success) throw new Error("UNAUTHORIZED");
-    user.password = undefined;
+    delete user.password;
     req.session.user = {
       username,
       ...user,
