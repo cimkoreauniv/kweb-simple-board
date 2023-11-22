@@ -22,7 +22,7 @@ const getList = async (start, count) => {
   const sql = `SELECT articles.id AS id, title, created_at AS createdAt,
     last_updated AS lastUpdated, display_name as displayName
     FROM articles INNER JOIN users ON articles.author=users.id
-    ORDER BY articles.id ASC LIMIT ?, ?`;
+    ORDER BY articles.id DESC LIMIT ?, ?`;
 
   const result = await runQuery(sql, [start, count]);
   return result.map(replaceDate);
