@@ -23,8 +23,8 @@ const writeArticleForm = async (req, res, next) => {
 const writeArticle = async (req, res, next) => {
   try {
     const { user } = req.session;
-    const title = req.body.trim();
-    const content = req.body.trim();
+    const title = req.body.title.trim();
+    const content = req.body.content.trim();
 
     if (!title || title.length > 50 || !content || content.length > 65535)
       throw new Error("BAD_REQUEST");
