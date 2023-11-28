@@ -37,7 +37,7 @@ const getTotalCount = async () => {
 
 const getById = async (id) => {
   const sql = `SELECT articles.id AS id, title, content, created_at AS createdAt,
-  last_updated AS lastUpdated, display_name as displayName
+  last_updated AS lastUpdated, author, display_name as displayName
   FROM articles INNER JOIN users ON articles.author=users.id
   AND articles.is_active = 1 AND articles.is_deleted=0 AND articles.id=?`;
 
@@ -47,7 +47,7 @@ const getById = async (id) => {
 
 const getByIdAndAuthor = async (id, author) => {
   const sql = `SELECT articles.id AS id, title, content, created_at AS createdAt,
-  last_updated AS lastUpdated, display_name as displayName
+  last_updated AS lastUpdated, author, display_name as displayName
   FROM articles INNER JOIN users ON articles.author=users.id
   AND articles.is_active = 1 AND articles.is_deleted=0 AND articles.id=? AND users.id = ?`;
 
