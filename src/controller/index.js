@@ -8,6 +8,8 @@ const { Router } = require("express");
 const router = Router();
 
 router.get("/", ctrl.indexPage);
+router.get("/articles/page/:page(\\d+)", ctrl.listArticles);
+router.get("/articles", ctrl.latestArticles);
 router.use("/auth", auth);
 router.use("/article", article);
 
